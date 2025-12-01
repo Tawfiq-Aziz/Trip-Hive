@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from 'react-router-dom';//Lopa
 import Home from './pages/Home.jsx';//Lopa
-//everything under second <div>
+//everything under second <div> ->Lopa
 
 const App = () => {
   return (
