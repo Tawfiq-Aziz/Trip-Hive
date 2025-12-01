@@ -1,18 +1,17 @@
 import React from "react";
-import { Routes, Route } from 'react-router-dom';//Lopa
-import Home from './pages/Home.jsx';//Lopa
-//everything under second <div> ->Lopa
+import Navbar from "./components/navBar.jsx";
+import { useLocation } from "react-router-dom";
 
 const App = () => {
-  return (
-    <div>
-      <div className='min-h-[70vh]'>
-        <Routes>
-          <Route path='/' element={<Home />} />
-        </Routes>
-      </div>
-    </div>
-  )
-}
+  const location = useLocation();
+  const isOwnerRoute = location.pathname.startsWith("/owner");
 
-export default App
+  return (
+    <div className="min-h-screen">
+      {!isOwnerRoute && <Navbar />}
+      {/* Your routes / pages will go here */}
+    </div>
+  );
+};
+
+export default App;
