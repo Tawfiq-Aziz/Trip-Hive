@@ -28,7 +28,7 @@ const NavBar = () => {
   return (
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-all ${
-        isScrolled ? "bg-[#5b5dff] shadow-md" : "bg-[#5b5dff]"
+        isScrolled ? "bg-[#5b5dff] shadow-md" : "bg-transparent"
       }`}
     >
       <div className="mx-auto flex items-center justify-between px-6 py-4 max-w-6xl">
@@ -73,7 +73,7 @@ const NavBar = () => {
           <img
             src={isMenuOpen ? assets.closeIcon : assets.menuIcon}
             alt="menu"
-            className={`h-5 w-5 ${isScrolled ? "invert" : ""}`}
+            className="h-5 w-5 invert"
           />
         </button>
       </div>
