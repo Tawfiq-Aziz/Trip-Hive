@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { assets } from "../assets/assets";
+import { useClerk, useUser, UserButton } from "@clerk/clerk-react";
 
 const NavBar = () => {
   const navLinks = [
@@ -12,6 +13,9 @@ const NavBar = () => {
 
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+  const {openSignIn} = useClerk()
+  const {user} = useUser()
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -56,7 +60,7 @@ const NavBar = () => {
 
         {/* Desktop Right */}
         <div className="hidden md:flex items-center gap-4">
-          <button className="px-5 py-2 rounded-full bg-black text-white text-sm hover:opacity-90 transition">
+          <button onClick={openSignIn} className="px-5 py-2 rounded-full bg-black text-white text-sm hover:opacity-90 transition">
             Login
           </button>
         </div>
@@ -92,7 +96,7 @@ const NavBar = () => {
             Dashboard
           </button>
 
-          <button className="mt-2 w-full px-5 py-2 rounded-full bg-black text-white text-sm">
+          <button onClick={openSignIn} className="mt-2 w-full px-5 py-2 rounded-full bg-black text-white text-sm">
             Login
           </button>
         </div>
