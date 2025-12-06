@@ -6,7 +6,7 @@ import OwnerLayout from "./pages/owner/ownerLayout.jsx";
 
 const App = () => {
   const location = useLocation();
-  const isOwnerRoute = location.pathname.startsWith("/owner");
+  const isOwnerRoute = location.pathname.includes("/owner");
 
   return (
     <div className="min-h-screen">
