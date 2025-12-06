@@ -40,17 +40,17 @@ const Navbar = () => {
                     {navLinks.map((link, i) => (
                         <a key={i} href={link.path} className={`group flex flex-col gap-0.5 ${isScrolled ? "text-gray-700" : "text-gray"}`}>
                             {link.name}
-                            <div className={`${isScrolled ? "bg-gray-700" : "bg-white"} h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
+                            <div className={`${isScrolled ? "bg-gray-700" : "bg-gray-700"} h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
                         </a>
                     ))}
-                    <button className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} transition-all`}>
+                    <button className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer text-black transition-all`}>
                         Dashboard
                     </button>
                 </div>
 
                 {/* Desktop Right */}
                 <div className="hidden md:flex items-center gap-4">
-                    <img src={assets.searchIcon} alt="search" className= {`${isScrolled && 'invert'}  h-7 transition-all duration-500`} />
+                    <img src={assets.searchIcon} alt="search" className= {`invert h-7 transition-all duration-500`} />
                     <button className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 ${isScrolled ? "text-white bg-black" : "bg-black text-white"}`}>
                         Login
                     </button>
@@ -73,7 +73,7 @@ const Navbar = () => {
                         </a>
                     ))}
 
-                    <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all">
+                    <button className="border px-4 py-1 text-sm font-black rounded-full cursor-pointer text-black transition-all">
                         Dashboard
                     </button>
 
