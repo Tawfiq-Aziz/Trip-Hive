@@ -84,7 +84,7 @@ const Navbar = () => {
                         </UserButton.MenuItems>
                     </UserButton>)
                     :
-                    (<button onClick={openSignIn} className={`px-8 py-2.5 rounded-full ml-4 transition-all duration-500 ${isScrolled ? "text-white bg-black" : "bg-black text-white"}`}>
+                    (<button onClick={openSignIn} className={`px-8 py-2.5 cursor-pointer rounded-full ml-4 transition-all duration-500 ${isScrolled ? "text-white bg-black" : "bg-black text-white"}`}>
                         Login
                     </button>)
                     }
