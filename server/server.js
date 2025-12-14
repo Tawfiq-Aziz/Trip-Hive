@@ -5,7 +5,7 @@ import connectDB from './configs/db.js';
 import { clerkMiddleware } from '@clerk/express'
 import clerkWebhooks from './controllers/clerkWebhooks.js';
 import paymentRoutes from "./routes/paymentRoutes.js";//added_stripe
-import sentimentRoutes from "./sentimentRoutes.js";//added_sentiment
+import sentimentRoutes from "./routes/sentimentRoutes.js";//added_sentiment
 
 connectDB();
 
@@ -28,5 +28,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
 
 
