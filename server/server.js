@@ -8,8 +8,11 @@ import userRouter from './routes/userRoutes.js';
 import paymentRoutes from "./routes/paymentRoutes.js"; // added_stripe
 import sentimentRoutes from "./routes/sentimentRoutes.js"; // fixed path
 import hotelRouter from './routes/hotelRoutes.js';
+import connectCloudinary from './configs/cloudinary.js';
+import roomRouter from './routes/roomRoutes.js';
 
 connectDB();
+connectCloudinary();
 
 const app = express();
 app.use(cors()); // Enable cross-origin resource sharing
@@ -24,6 +27,7 @@ app.get('/', (req, res) => res.send('API IS WORKING'));
 // Other routes
 app.use("/api/user", userRouter );
 app.use("/api/hotels", hotelRouter );
+app.use("/api/rooms", roomRouter);
 
 app.use("/api/payment", paymentRoutes);
 app.use("/api/sentiment", sentimentRoutes);
