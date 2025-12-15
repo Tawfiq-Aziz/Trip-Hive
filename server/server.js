@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDB from './configs/db.js';
 import { clerkMiddleware } from '@clerk/express';
 import clerkWebhooks from './controllers/clerkWebhooks.js';
+import userRouter from './routes/userRoutes.js';    
 import paymentRoutes from "./routes/paymentRoutes.js"; // added_stripe
 import sentimentRoutes from "./routes/sentimentRoutes.js"; // fixed path
 
@@ -20,6 +21,7 @@ app.use("/api/clerk", clerkWebhooks);
 app.get('/', (req, res) => res.send('API IS WORKING'));
 
 // Other routes
+app.use("/api/user", userRouter );
 app.use("/api/payment", paymentRoutes);
 app.use("/api/sentiment", sentimentRoutes);
 

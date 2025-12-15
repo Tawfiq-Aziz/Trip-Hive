@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.57.0",
+    "@stripe/react-stripe-js": "^5.4.1",
+    "@stripe/stripe-js": "^8.5.3",
     "@tailwindcss/vite": "^4.1.17",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
