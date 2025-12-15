@@ -10,6 +10,7 @@ import sentimentRoutes from "./routes/sentimentRoutes.js"; // fixed path
 import hotelRouter from './routes/hotelRoutes.js';
 import connectCloudinary from './configs/cloudinary.js';
 import roomRouter from './routes/roomRoutes.js';
+import bookingRouter from './routes/bookingRoutes.js';
 
 connectDB();
 connectCloudinary();
@@ -28,6 +29,7 @@ app.get('/', (req, res) => res.send('API IS WORKING'));
 app.use("/api/user", userRouter );
 app.use("/api/hotels", hotelRouter );
 app.use("/api/rooms", roomRouter);
+app.use("/api/bookings", bookingRouter);
 
 app.use("/api/payment", paymentRoutes);
 app.use("/api/sentiment", sentimentRoutes);
