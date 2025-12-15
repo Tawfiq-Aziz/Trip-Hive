@@ -1,5 +1,5 @@
 import express from "express";
-import { analyzeSentiment } from "../controller/sentimentController.js";
+import { analyzeSentiment } from "../controllers/sentimentController.js";
 
 const router = express.Router();
 
