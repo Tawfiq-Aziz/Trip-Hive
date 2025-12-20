@@ -7,7 +7,8 @@ import OwnerLayout from "./pages/owner/ownerLayout.jsx";
 import Footer from "./components/Footer.jsx";
 import Checkout from "./pages/Checkout";//added_stripe
 import MyBookings from "./pages/MyBookings.jsx";
-import RoomDetails from './pages/RoomDetails';
+import RoomDetails from "./pages/RoomDetails.jsx";
+
 ";
 
 const App = () => {
