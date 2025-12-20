@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link, Routes, Route, useNavigate } from "react-router-dom";
-import OwnerDashboard from "./OwnerDashboard.jsx";
-import OwnerHotels from "./OwnerHotels.jsx";
-import OwnerRooms from "./OwnerRooms.jsx";
-import OwnerAvailability from "./OwnerAvailability.jsx";
+import OwnerDashboard from "./ownerDashboard.jsx";
+import OwnerHotels from "./ownerHotels.jsx";
+import OwnerRooms from "./ownerRooms.jsx";
+import OwnerAvailability from "./ownerAvailability.jsx";
 
 const OwnerLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);

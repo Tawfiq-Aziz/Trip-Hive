@@ -22,3 +22,24 @@ export const registerHotel = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
+
+// Get owner's hotels
+export const getOwnerHotels = async (req, res) => {
+    try {
+        const owner = req.user._id;
+        const hotels = await Hotel.find({ owner });
+        res.json({ success: true, hotels });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Get all hotels
+export const getAllHotels = async (req, res) => {
+    try {
+        const hotels = await Hotel.find();
+        res.json({ success: true, hotels });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
