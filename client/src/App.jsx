@@ -7,6 +7,7 @@ import OwnerLayout from "./pages/owner/ownerLayout.jsx";
 import Footer from "./components/Footer.jsx";
 import Checkout from "./pages/Checkout";//added_stripe
 import MyBookings from "./pages/MyBookings.jsx";
+import RoomDetails from "../../../client/src/pages/RoomDetails.jsx";
 
 const App = () => {
   const location = useLocation();
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/owner/*" element={<OwnerLayout />} />
           <Route path="/my-bookings" element={<MyBookings />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path='/rooms/:id' element={<RoomDetails/>}/>
         </Routes>
       </div>
       <Footer />
