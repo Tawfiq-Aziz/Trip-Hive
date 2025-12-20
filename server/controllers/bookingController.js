@@ -123,3 +123,91 @@ export const getHotelBookings = async (req, res) => {
         res.json({ success: false, message: "Failed to fetch bookings" });
     }
 }
+
+// API to cancel a booking
+export const cancelBooking = async (req, res) => {
+    try {
+        const { bookingId } = req.params;
+        const hotel = await Hotel.findOne({ owner: req.auth.userId });
+        
+        if (!hotel) {
+            return res.json({ success: false, message: "Hotel not found" });
+        }
+
+        const booking = await Booking.findById(bookingId);
+        if (!booking) {
+            return res.json({ success: false, message: "Booking not found" });
+        }
+
+        // Verify booking belongs to this hotel
+        if (booking.hotel.toString() !== hotel._id.toString()) {
+            return res.json({ success: false, message: "Unauthorized" });
+        }
+
+        // Update booking status to cancelled
+        booking.status = 'cancelled';
+        await booking.save();
+
+        res.json({ success: true, message: "Booking cancelled successfully" });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// API to get analytics data
+export const getAnalytics = async (req, res) => {
+    try {
+        const hotel = await Hotel.findOne({ owner: req.auth.userId });
+        
+        if (!hotel) {
+            return res.json({ success: false, message: "Hotel not found" });
+        }
+
+        const bookings = await Booking.find({hotel: hotel._id}).populate('room');
+        
+        // Calculate metrics
+        const totalBookings = bookings.length;
+        const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
+        const cancelledBookings = bookings.filter(b => b.status === 'cancelled').length;
+        const totalRevenue = bookings
+            .filter(b => b.status === 'confirmed')
+            .reduce((acc, booking) => acc + booking.totalPrice, 0);
+        
+        const averageBookingValue = totalBookings > 0 ? (totalRevenue / confirmedBookings) || 0 : 0;
+        const cancellationRate = totalBookings > 0 ? ((cancelledBookings / totalBookings) * 100).toFixed(2) : 0;
+
+        // Revenue by month
+        const revenueByMonth = {};
+        bookings.forEach(booking => {
+            if (booking.status === 'confirmed') {
+                const month = new Date(booking.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+                revenueByMonth[month] = (revenueByMonth[month] || 0) + booking.totalPrice;
+            }
+        });
+
+        // Room performance
+        const roomPerformance = {};
+        bookings.forEach(booking => {
+            if (booking.room) {
+                const roomName = booking.room.roomType;
+                roomPerformance[roomName] = (roomPerformance[roomName] || 0) + 1;
+            }
+        });
+
+        res.json({ 
+            success: true, 
+            analytics: {
+                totalBookings,
+                confirmedBookings,
+                cancelledBookings,
+                totalRevenue,
+                averageBookingValue: parseFloat(averageBookingValue.toFixed(2)),
+                cancellationRate: parseFloat(cancellationRate),
+                revenueByMonth,
+                roomPerformance
+            }
+        });
+    } catch (error) {
+        res.json({ success: false, message: error.message });
+    }
+}

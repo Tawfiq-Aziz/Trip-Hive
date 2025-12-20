@@ -4,6 +4,8 @@ import OwnerDashboard from "./ownerDashboard.jsx";
 import OwnerHotels from "./ownerHotels.jsx";
 import OwnerRooms from "./ownerRooms.jsx";
 import OwnerAvailability from "./ownerAvailability.jsx";
+import OwnerBookings from "./ownerBookings.jsx";
+import OwnerAnalytics from "./ownerAnalytics.jsx";
 
 const OwnerLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -65,6 +67,22 @@ const OwnerLayout = () => {
             <span className="text-xl">📅</span>
             {isSidebarOpen && <span>Availability</span>}
           </Link>
+
+          <Link
+            to="/owner/bookings"
+            className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-600 transition"
+          >
+            <span className="text-xl">📋</span>
+            {isSidebarOpen && <span>Bookings</span>}
+          </Link>
+
+          <Link
+            to="/owner/analytics"
+            className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-600 transition"
+          >
+            <span className="text-xl">📈</span>
+            {isSidebarOpen && <span>Analytics</span>}
+          </Link>
         </nav>
 
         {/* Sidebar Toggle + Logout */}
@@ -93,6 +111,8 @@ const OwnerLayout = () => {
             <Route path="/hotels" element={<OwnerHotels />} />
             <Route path="/rooms" element={<OwnerRooms />} />
             <Route path="/availability" element={<OwnerAvailability />} />
+            <Route path="/bookings" element={<OwnerBookings />} />
+            <Route path="/analytics" element={<OwnerAnalytics />} />
           </Routes>
         </div>
       </main>
