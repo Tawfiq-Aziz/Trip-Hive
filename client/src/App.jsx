@@ -7,7 +7,8 @@ import OwnerLayout from "./pages/owner/ownerLayout.jsx";
 import Footer from "./components/Footer.jsx";
 import Checkout from "./pages/Checkout";//added_stripe
 import MyBookings from "./pages/MyBookings.jsx";
-import RoomDetails from "../../../client/src/pages/RoomDetails.jsx";
+import RoomDetails from './pages/RoomDetails';
+";
 
 const App = () => {
   const location = useLocation();
