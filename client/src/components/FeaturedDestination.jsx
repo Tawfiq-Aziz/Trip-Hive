@@ -5,7 +5,6 @@ import Title from './Title'
 import { useNavigate } from 'react-router-dom'
 
 const FeaturedDestination = () => {
-
   //const navigate = useNavigate();
   const{rooms, naviagte} = useAppContext();  //newly added and edited
   return rooms.length > 0 && (
