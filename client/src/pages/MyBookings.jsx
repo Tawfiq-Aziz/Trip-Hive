@@ -3,8 +3,30 @@ import Title from '../components/Title';
 import { assets, userBookingsDummyData } from '../assets/assets';
 
 const MyBookings = () => {
-
-  const [bookings, setBookings] = useState(userBookingsDummyData)
+  {/* wrote this portion */}
+  const {axios, getToken, user} = useAppContext()//wrote this line
+  const [bookings, setBookings] = useState([])//removed dummy room
+  
+  const fetchUserBookings = async ()=>{
+    try{
+      const {data} = await axios.get('/api/bookings/user', {headers: {Authorization: `Bearer ${await getToken()}` }})
+      if(data.success){
+        setBookings(data.bookings)
+      }else {
+        toast.error(error.message)
+      }
+    }catch (error){
+      toast.error(error.message)
+    }
+  }
+  useEffect(()=>{
+    if(user){
+      fetchUserBookings()
+    }
+  },[user])
+  
+  {/* end of the portion */}
+  
   return (
     <div className='py-28 md:pb-35 md:pt-32 px-4 md:px-16 lg:px-24 xl:px-32'>
       <Title 
@@ -79,4 +101,5 @@ const MyBookings = () => {
 };
 
 export default MyBookings;
+
 
