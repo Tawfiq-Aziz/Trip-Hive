@@ -10,6 +10,8 @@ import MyBookings from "./pages/MyBookings.jsx";
 import RoomDetails from "./pages/RoomDetails.jsx";
 import {Toaster} from "react-hot-toast";//
 import { useAppContext } from "./context/AppContext.jsx"; // added
+import Experience from './pages/Experience.jsx';  //added
+//import HotelReg from "./components/HotelReg.jsx";
 
 const App = () => {
   const location = useLocation();
@@ -26,6 +28,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/rooms" element={<AllRooms/>} />
+          <Route path="/experience" element={<Experience />} />  
           <Route path="/owner/*" element={<OwnerLayout />} />
           <Route path="/my-bookings" element={<MyBookings />} />
           <Route path="/checkout" element={<Checkout />} />
