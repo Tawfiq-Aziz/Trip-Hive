@@ -4,6 +4,7 @@ import { assets, facilityIcons, roomCommonData, roomsDummyData } from './../asse
 import StarRating from './../components/StarRating'
 import { toast } from 'react-hot-toast' // added toast import
 import { useAppContext } from './../context/AppContext' // added import for useAppContext
+import ReviewForm from './../components/ReviewForm'// ✅ added
 
 const RoomDetails = () => {
     const { id } = useParams()
@@ -18,7 +19,12 @@ const RoomDetails = () => {
     const [checkOutDate, setCheckOutDate] = useState(null)
     const [guests, setGuests] = useState(1)
     const [isAvailable, setIsAvailable] = useState(false) // fixed
- 
+    // ✅ added
+    const [reviews, setReviews] = useState([]) 
+    const [newRating, setNewRating] = useState(5) 
+    const [newComment, setNewComment] = useState('')
+    // ✅ added till here
+    
     const checkAvailability = async () => {
         try {
             if (!checkInDate || !checkOutDate) return
@@ -87,6 +93,44 @@ const RoomDetails = () => {
         }
     }, [id]) //edited
 
+    //✅ FETCH REVIEWS 
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const { data } = await axios.get(`/api/reviews/${id}`)
+                if (data.success) setReviews(data.reviews)
+            } catch (err) {
+                console.log("Error fetching reviews:", err.message)
+            }
+        }
+        fetchReviews()
+    }, [id])
+
+    const submitReview = async (e) => {
+        e.preventDefault()
+        if (!user) return toast.error("You must be logged in to submit a review")
+
+        try {
+            const { data } = await axios.post(
+                "/api/reviews",
+                {
+                    room: id,
+                    rating: newRating,
+                    comment: newComment
+                },
+                { headers: { Authorization: `Bearer ${await getToken()}` } }
+            )
+            if (data.success) {
+                toast.success("Review submitted successfully")
+                setReviews(prev => [data.review, ...prev]) 
+                setNewRating(5)
+                setNewComment('')
+            }
+        } catch (err) {
+            toast.error(err.message)
+        }
+    }
+     //✅ till here added
   
     if (!room) return null
 
@@ -217,6 +261,48 @@ const RoomDetails = () => {
                     {isAvailable ? "Book Now" : "Check Availability"}
                 </button>
             </form>
+
+            {/*  ✅ t Reviews Section  */}
+            <div className='mt-16 max-w-6xl mx-auto'>
+                <h2 className='text-2xl font-playfair mb-4'>Reviews</h2>
+
+                {user && (
+                    <form onSubmit={submitReview} className='flex flex-col gap-3 mb-6'>
+                        <label className='font-medium'>Your Rating</label>
+                        <select
+                            value={newRating}
+                            onChange={(e) => setNewRating(Number(e.target.value))}
+                            className='w-24 border border-gray-300 rounded px-2 py-1'
+                        >
+                            {[1,2,3,4,5].map(n => <option key={n} value={n}>{n} Star</option>)}
+                        </select>
+
+                        <textarea
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            placeholder='Write your review...'
+                            className='border border-gray-300 rounded px-3 py-2 w-full'
+                            required
+                        />
+
+                        <button type='submit' className='bg-primary text-white px-4 py-2 rounded'>
+                            Submit Review
+                        </button>
+                    </form>
+                )}
+
+                {reviews.length === 0 && <p>No reviews yet.</p>}
+                {reviews.map((rev) => (
+                    <div key={rev._id} className='border-b py-4'>
+                        <div className='flex items-center gap-2'>
+                            <p className='font-semibold'>{rev.user.name}</p>
+                            <StarRating rating={rev.rating} />
+                        </div>
+                        <p className='text-gray-700'>{rev.comment}</p>
+                    </div>
+                ))}
+            </div>
+            {/* ✅ t added till here */}
         </div>
     )
 }
