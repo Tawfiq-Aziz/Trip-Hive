@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react'//edited
+import React, { useState} from 'react'//edited
 import { assets, facilityIcons, roomsDummyData } from '../assets/assets'
-import { useNavigate } from 'react-router-dom'//edited
+import { useNavigate } from 'react-router-dom'
 
 const CheckBox=({label,selected =false, onChange =() => {}}) =>{
     return (
@@ -49,16 +49,30 @@ const AllRooms =() =>{
 
 
 
-//edited from here until return line
+///Handle changes for filters and sorting
+    const handleFilterChange = (checked, value, type) =>{
+        setSelectedFilters((prevFilters)=>{
+            const updatedFilters = {...prevFilters};
+            if(checked){
+                updatedFilters[type].push(value);
+            }else{
+                updatedFilters[type] = updatedFilters[type].filter(item => item !== value);
+            }
+            return updatedFilters;
+        })
+    }
+
     const handleSortChange = (sortOption)=>{
         setSelectedSort(sortOption);
     }
 
+    // function to check if a room matches the selected room types
     const matchesRoomType = (room) =>{
         return selectedFilters.roomType.length === 0 || selectedFilters.roomType.includes(room.roomType);
 
     }
 
+    // Function to check if a room matches the selected price ranges
     const matchesPriceRange = (room)=>{
         return selectedFilters.priceRange.length === 0 || selectedFilters.priceRange.some(range => {
             const [min, max] = range.split(' to ').map(Number);
@@ -66,6 +80,7 @@ const AllRooms =() =>{
         })
     }
 
+    // Function to sort rooms based on the selected sort option
     const sortRooms = (a, b) =>{
         if(selectedSort === 'Price low to High'){
             return a.pricePerNight - b.pricePerNight;
@@ -79,16 +94,19 @@ const AllRooms =() =>{
         return 0;
     }
 
+    // Filter Destination
     const filterDestination = (room) => {
         const destination = searchParmas.get('destination');
         if(!destination) return true;
         return room.hotel.city.toLowerCase().includes(destination.toLowerCase())
     }
 
+    // Filter and sort rooms based on the selected silters and sort option
     const filteredRooms = useMemo(()=>{
         return rooms.filter(room => matchesRoomType(room) && matchesPriceRange(room) && filterDestination(room)).sort(sortRooms);
     },[rooms, selectedFilters, selectedSort, searchParams])
 
+    //clear all filters
     const clearFilters = () => {
         setSelectedFilters({
             roomType: [],
