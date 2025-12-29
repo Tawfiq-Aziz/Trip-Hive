@@ -1,8 +1,7 @@
-import React , { useState, useEffect } from 'react' //full edited and created
-import { useAppContext } from '../context/AppContext'; // added
+import React from 'react' //full edited and created
 import HotelCard from './HotelCard'
 import Title from './Title'
-//import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const RecommendedHotels = () => {
   const{rooms, searchedCities} = useAppContext();
@@ -35,4 +34,5 @@ const RecommendedHotels = () => {
 
 
 export default RecommendedHotels
+
 
