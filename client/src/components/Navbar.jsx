@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation} from 'react-router-dom';//use navigate
+import { Link, useLocation, useNavigate} from 'react-router-dom';//use navigate
 import { assets } from '../assets/assets';
-import { useClerk,  UserButton } from '@clerk/clerk-react';//removed useUser, from this line
+import { useClerk,  UserButton , useUser} from '@clerk/clerk-react';//removed useUser, from this line
 import { useAppContext } from '../context/AppContext.jsx';//imported this line
 
 
@@ -15,7 +15,7 @@ const Navbar = () => {
     const navLinks = [
         { name: 'Home', path: '/' },
         { name: 'Hotels', path: '/rooms' },
-        { name: 'Experience', path: '/' },
+        { name: 'Experience', path: '/experience' },
         { name: 'About', path: '/' },
     ];
 
@@ -25,12 +25,12 @@ const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const {openSignIn} = useClerk();
-    // removed these 2 line
+    // removed these 1 line
     // const {user} = useUser();
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const location = useLocation();
 
-    const {user, navigate, isOwner, setShowHotelReg } = useAppContext();//added this line
+    const {user, isOwner, setShowHotelReg } = useAppContext();//added this line
 
 
     useEffect(() => {
