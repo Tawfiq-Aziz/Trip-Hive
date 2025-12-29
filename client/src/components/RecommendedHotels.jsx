@@ -1,4 +1,5 @@
-import React from 'react' //full edited and created
+import React , { useState, useEffect } from 'react' //full edited and created
+import { useAppContext } from '../context/AppContext'; // added
 import HotelCard from './HotelCard'
 import Title from './Title'
 import { useNavigate } from 'react-router-dom'
@@ -31,5 +32,6 @@ const RecommendedHotels = () => {
     </div>
   )
 }
+
 
 export default RecommendedHotels
