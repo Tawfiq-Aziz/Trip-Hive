@@ -5,7 +5,26 @@ import searchIcon from "../assets/searchIcon.svg";
 
 const cities = ["Dhaka", "Chittagong", "Sylhet", "Khulna"];
 
-const Hero = () => {
+const Hero = () => {//edited
+
+  const {navigate, getToken, axios, setSearchedCities} = useAppContext()
+  const [destination, setDestination] = useState("")
+
+  const onSearch = async (e)=>{
+    e.preventDefault();
+    navigate('/rooms?destination=${destination}')
+    //call api to save recent searched city
+    await axios.post('/api/user/store-recent-search', {recentSearchedCity:destination},{headers: {Authorization: `Bearer ${await getToken()}` }});
+
+    // add destination to searchedCities max 3 recent searched cities
+    setSearchedCities((prevSearchedCities)=>{
+      const updatedSearchedCities = [...prevSearchedCities, destination];
+      if(updatedSearchedCities.length > 3){
+        updatedSearchedCities.shift();
+      }
+      return updatedSearchedCities;
+    })
+  }
   return (
     <div
       className="flex flex-col items-start justify-center px-6 md:px-16 lg:px-24 xl:px-32 text-white h-screen bg-no-repeat bg-cover bg-center"
@@ -97,4 +116,5 @@ const Hero = () => {
 };
 
 export default Hero;
+
 
