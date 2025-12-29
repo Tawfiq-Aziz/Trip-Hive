@@ -4,9 +4,57 @@ import { assets, facilityIcons, roomCommonData, roomsDummyData } from './../asse
 import StarRating from './../components/StarRating';
  const RoomDetails = () => {
      const {id} =useParams()
-     const [room,setRoom] =useState(null)
+     const [room, getToken, axios, navigate} = useAppContext()
+     const [room,setRoom] =useState(null)//edited
+  //edited from here
      const [mainImage,setMainImage]=useState(null)
+     const [checkInDate,setCheckInDate]=useState(null); 
+     const [checkOutDate,setCheckOutDate]=useState(null);
+     const [guests,setGuests]=useState(1);
 
+     const [isAvailiable,setAvailiable]=useState(false);
+
+     const checkAvailiability = async ()=>{
+        try{
+            if(checkInDate >= checkOutDate){
+                toast.error('Check-In Date should be less than Check-Out Date')
+                return;
+            }
+            const {data} = await axios.post('/api/bookings/check-availibility',{room: id, checkInDate, checkOutDate})
+            if(data.isAvailiable){
+                setIsAvailiable(true)
+                toast.success('Room is Availiable')
+            }else{
+                setIsAvailiable(false)
+                toast.error('Room is not Availiable')
+            }
+        }catch(error){
+            toast.error(error.message)
+
+        }
+     }
+
+     const onSubmitHandler = async (e)=>{
+        try{
+            e.preventsDefaults();
+            if(!isAvailiable){
+                return checkAvailiability();
+            }else{
+                const {data} = await axios.post('/api/bookings/book', {room: id, checkInDate, checkOutDate, guests, paymentMethod: "Pay At hotel"},{headers: {Authorization: `Bearer ${await getToken()}` }} )
+                if (data.success){
+                    toast.success(data.message)
+                    navigate('/my-bookings')
+                    scrollTo(0, 0)
+                }else{
+                    toast.error(error.message)
+                }
+            }
+        } catch (error) {
+            toast.error(data.massage)
+
+        }
+     }
+//edited till here
 
      useEffect(()=>{
        const room= roomsDummyData.find(room =>room._id===id)
