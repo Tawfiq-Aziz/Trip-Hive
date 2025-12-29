@@ -5,22 +5,22 @@ import Home from "./pages/Home.jsx";
 import AllRooms from "./pages/AllRooms.jsx";
 import OwnerLayout from "./pages/owner/ownerLayout.jsx";
 import Footer from "./components/Footer.jsx";
-import Checkout from "./pages/Checkout";//added
+import Checkout from "./pages/Checkout";//
 import MyBookings from "./pages/MyBookings.jsx";
 import RoomDetails from "./pages/RoomDetails.jsx";
-import {Toaster} from "react-hot-toast";//imported for connecting backend
-
+import {Toaster} from "react-hot-toast";//
+import { useAppContext } from "./context/AppContext.jsx"; // added
 
 const App = () => {
   const location = useLocation();
   const isOwnerRoute = location.pathname.includes("/owner");
-  const {showHotelReg} = useAppContext();{/*added for connecting backend */}
+  const {showHotelReg} = useAppContext();
 
   return (
     <div>
-      <Toaster /> {/*added for connecting backend */}
+      <Toaster /> 
       {!isOwnerRoute && <Navbar />}
-      {showHotelReg && <HotelReg />}{/*added for connecting backend */}
+      {showHotelReg && <HotelReg />}
       <div className="min-h-screen">
         
         <Routes>
