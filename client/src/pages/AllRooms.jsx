@@ -124,13 +124,14 @@ const AllRooms =() =>{
                     <h1 className='font-playfair text-4xl md:text-[40px]'>Hotel Rooms</h1>
                     <p className='text-sm dm:text-base text-gray-500/90 mt-2 max-w-174'>Take Advantage of our limited-time offers and special packages to enhance your stay and create unforgettable memories.</p>
                 </div>
-                {roomsDummyData.map((room)=>(
+                {/*edited next line*/}
+                {filteredRooms.map((room)=>(
                     <div key={room._id} className='flex flex-col md:flex-row items-start py-10 gap-6 border-b border-gray-300 last:pb-30 last:border-0'>
-                        <img onClick={()=> {nevigate(`/rooms/${room._id}`); scrollTo(0,0)}}
+                        <img onClick={()=> {navigate(`/rooms/${room._id}`); scrollTo(0,0)}}
                         src={room.images[0]} alt='hotel-img' title='View Room Details' className='max-h-65 md:w-1/2 rounded-xl shadow-lg object-cover cursor-pointer'/>
                         <div className='md:w-1/2 flex flex-col gap-2'>
                             <p className='text-gray-500'>{room.hotel.city}</p>
-                            <p onClick={()=> {nevigate(`/rooms/${room._id}`); scrollTo(0,0)}}
+                            <p onClick={()=> {navigate(`/rooms/${room._id}`); scrollTo(0,0)}}
                             className='text-gray-800 text-3xl font-playfair cursor-pointer'>{room.hotel.name}</p>
                             <div className='flex items-center'>
                                 <startRating/>
@@ -170,22 +171,22 @@ const AllRooms =() =>{
                     <div className='px-5 pt-5'>
                         <p className='font-medium text-gray-800 pb-2'>Popular filters</p>
                         {roomTypes.map((room,index)=>(
-                            <CheckBox key={index} label={room}/>
-                        ))}
+                            <CheckBox key={index} label={room} selected={selectedFilters.roomType.includes(room)} onChange={(checked)=>handleFilterChange(checked, range, 'priceRange')}/>
+                        ))}{/*edited Checkbox*/}
                     </div>
 
                     <div className='px-5 pt-5'>
                         <p className='font-medium text-gray-800 pb-2'>Price Range</p>
                         {priceRanges.map((range,index)=>(
-                            <CheckBox key={index} label={`$ ${range}`}/>
-                        ))}
+                            <CheckBox key={index} label={`${currency} ${range}`} selected={selectedFilters.priceRange.includes(range)} onChange={(checked)=>handleFilterChange(checked, rooms, 'roomType')}/>
+                        ))}{/*edited Checkbox*/}
                     </div>
 
                     <div className='px-5 pt-5 pb-7'>
                         <p className='font-medium text-gray-800 pb-2'>Sort By</p>
                         {sortOptions.map((option,index)=>(
-                            <RadioButton key={index} label={option}/>
-                        ))}
+                            <RadioButton key={index} label={option} selected={selectedSort === option} onchange={()=> handleSortChange(option)}/>{}
+                        ))}{/*edited RadioButton*/}
                     </div>
 
 
