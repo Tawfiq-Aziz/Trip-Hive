@@ -10,11 +10,35 @@ export const AppContextProvider = ({ children }) => {
 
   // Add showHotelReg 
   const [showHotelReg, setShowHotelReg] = useState(false);
-
+  // ✅ added
+  const [user, setUser] = useState(null);
+  const [isOwner, setIsOwner] = useState(false);
+  const { user: clerkUser } = useUser(); 
+  // ✅ added till here
+  
   const getToken = async () => {
     return localStorage.getItem("token");
   };
 
+  // ✅ Sync Clerk user with backend
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (clerkUser) {
+        try {
+          const { data } = await axios.get(`/api/users/${clerkUser.id}`);
+          setUser(data);
+          setIsOwner(data.role === "hotelOwner"); // ✅ set owner status
+        } catch (err) {
+          console.log("Error fetching user from backend:", err.message);
+        }
+      } else {
+        setUser(null);
+        setIsOwner(false);
+      }
+    };
+    fetchUser();
+  }, [clerkUser]);
+  
   return (
     <AppContext.Provider
       value={{
@@ -26,6 +50,8 @@ export const AppContextProvider = ({ children }) => {
         setRooms,
         showHotelReg,        //  add this
         setShowHotelReg      // add this
+        user,               // ✅ add this
+        isOwner,     // ✅
       }}
     >
       {children}
@@ -36,3 +62,4 @@ export const AppContextProvider = ({ children }) => {
 export const useAppContext = () => {
   return useContext(AppContext);
 };
+
