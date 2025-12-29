@@ -11,6 +11,7 @@ const Home = () => {
   return (
     <>
       <Hero />
+      <RecommendedHotels/>
       <FeaturedDestination />
       <ExclusiveOffers />
       <Testimonial />
@@ -20,4 +21,5 @@ const Home = () => {
 };
 
 export default Home
+
 
