@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'//added
 
 const FeaturedDestination = () => {
-  const{rooms, navigate} = useAppContext();  //edited navigate syllable
+  const{rooms} = useAppContext();
+  const navigate = useNavigate();// ✅added
   return rooms.length > 0 && (
     <div className='flex flex-col items-center px-6 md:px-16 lg:px-24 bg-slate-50
     py-20'>
