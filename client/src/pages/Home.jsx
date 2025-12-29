@@ -4,6 +4,8 @@ import FeaturedDestination from '../components/FeaturedDestination';
 import ExclusiveOffers from '../components/ExclusiveOffers';
 import Testimonial from '../components/Testimonial';
 import NewsLetter from '../components/NewsLetter';
+import RecommendedHotels from '../components/RecommendedHotels';//imported and wrote recommended hotels
+
 
 const Home = () => {
   return (
@@ -18,3 +20,4 @@ const Home = () => {
 };
 
 export default Home
+
