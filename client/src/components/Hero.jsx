@@ -1,23 +1,22 @@
-import React from "react";
+import React, { useState } from "react";//added
 import heroImage from "../assets/heroImage.png";
 import calenderIcon from "../assets/calenderIcon.svg"; 
 import searchIcon from "../assets/searchIcon.svg";
-//import { useAppContext } from "../context/AppContext"; //edited
+import { useAppContext } from "../context/AppContext"; //edited
 
 const cities = ["Dhaka", "Chittagong", "Sylhet", "Khulna"];
 
-const Hero = () => {//edited
-
-  const { naviagte, getToken, axios, setSearchedCities } = useAppContext();//edited
+const Hero = () => {
+  //edited navigate syllable
+  const { navigate, getToken, axios, setSearchedCities } = useAppContext();//edited
   const [destination, setDestination] = useState("")
 
   const onSearch = async (e)=>{
     e.preventDefault();
-    navigate('/rooms?destination=${destination}')
-    //call api to save recent searched city
+    navigate(`/rooms?destination=${destination}`)//edited ``
     await axios.post('/api/user/store-recent-search', {recentSearchedCity:destination},{headers: {Authorization: `Bearer ${await getToken()}` }});
 
-    // add destination to searchedCities max 3 recent searched cities
+    // 
     setSearchedCities((prevSearchedCities)=>{
       const updatedSearchedCities = [...prevSearchedCities, destination];
       if(updatedSearchedCities.length > 3){
@@ -26,7 +25,7 @@ const Hero = () => {//edited
       return updatedSearchedCities;
     })
   }
-  //edited till here
+  //
   return (
     <div
       className="flex flex-col items-start justify-center px-6 md:px-16 lg:px-24 xl:px-32 text-white h-screen bg-no-repeat bg-cover bg-center"
