@@ -1,13 +1,15 @@
 import React from 'react'
 //import {roomsDummyData} from '../assets/assets'
-import HotelCard from './HotelCard'
+import HotelCard from './HotelCard'//removed dommy data
 import Title from './Title'
 import { useNavigate } from 'react-router-dom'
+import { useAppContext } from '../context/AppContext'; // added
 
 const FeaturedDestination = () => {
 
   //const navigate = useNavigate();
-  const{rooms, navigate} = useAppContext(); //newly added and edited
+  const{rooms} = useAppContext();  //newly added and edited
+  const navigate = useNavigate(); // added
   return rooms.length > 0 && (
     <div className='flex flex-col items-center px-6 md:px-16 lg:px-24 bg-slate-50
     py-20'>
