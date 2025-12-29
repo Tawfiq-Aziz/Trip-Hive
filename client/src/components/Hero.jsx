@@ -2,12 +2,16 @@ import React from "react";
 import heroImage from "../assets/heroImage.png";
 import calenderIcon from "../assets/calenderIcon.svg"; 
 import searchIcon from "../assets/searchIcon.svg";
+import { useAppContext } from "../context/AppContext"; //edited
+import { useNavigate } from "react-router-dom";//edited
 
 const cities = ["Dhaka", "Chittagong", "Sylhet", "Khulna"];
 
 const Hero = () => {//edited
 
-  const {navigate, getToken, axios, setSearchedCities} = useAppContext()
+  const appContext = useAppContext();//edited
+  const { getToken, axios, setSearchedCities } = appContext;
+  const navigate = useNavigate(); //edited
   const [destination, setDestination] = useState("")
 
   const onSearch = async (e)=>{
@@ -44,7 +48,10 @@ const Hero = () => {//edited
       </p>
 
       
-      <form className="bg-white text-gray-500 rounded-lg px-6 py-4 flex flex-col md:flex-row gap-4 mt-6 max-md:mx-auto max-md:items-start">
+      <form 
+        onSubmit={onSearch}
+        className="bg-white text-gray-500 rounded-lg px-6 py-4 flex flex-col md:flex-row gap-4 mt-6 max-md:mx-auto max-md:items-start">
+        {/* edited */}
         
         <div>
           <div className="flex items-center gap-2">
@@ -52,6 +59,8 @@ const Hero = () => {//edited
             <label htmlFor="destinationInput">Destination</label>
           </div>
           <input
+            onChange={(e) => setDestination(e.target.value)}//edited
+            value={destination} //edited
             list="destinations"
             id="destinationInput"
             type="text"
@@ -116,5 +125,6 @@ const Hero = () => {//edited
 };
 
 export default Hero;
+
 
 
