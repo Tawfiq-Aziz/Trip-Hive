@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'//edited
 import { assets, facilityIcons, roomsDummyData } from '../assets/assets'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate , useSearchParams} from 'react-router-dom'//edited
+import { useAppContext } from '../context/AppContext'//edited
 
 const CheckBox=({label,selected =false, onChange =() => {}}) =>{
     return (
@@ -49,6 +50,55 @@ const AllRooms =() =>{
 
 
 
+//edited from here until return line
+    const handleSortChange = (sortOption)=>{
+        setSelectedSort(sortOption);
+    }
+
+    const matchesRoomType = (room) =>{
+        return selectedFilters.roomType.length === 0 || selectedFilters.roomType.includes(room.roomType);
+
+    }
+
+    const matchesPriceRange = (room)=>{
+        return selectedFilters.priceRange.length === 0 || selectedFilters.priceRange.some(range => {
+            const [min, max] = range.split(' to ').map(Number);
+            return room.pricePerNight >= min && room.pricePerNight <= max;
+        })
+    }
+
+    const sortRooms = (a, b) =>{
+        if(selectedSort === 'Price low to High'){
+            return a.pricePerNight - b.pricePerNight;
+        }
+        if(selectedSort === 'Price High to Low'){
+            return b.pricePerNight - a.pricePerNight;
+        }
+        if(selectedSort === 'Newest First'){
+            return new Date(b.createdAt) - new Date(a.createdAt)
+        }
+        return 0;
+    }
+
+    const filterDestination = (room) => {
+        const destination = searchParmas.get('destination');
+        if(!destination) return true;
+        return room.hotel.city.toLowerCase().includes(destination.toLowerCase())
+    }
+
+    const filteredRooms = useMemo(()=>{
+        return rooms.filter(room => matchesRoomType(room) && matchesPriceRange(room) && filterDestination(room)).sort(sortRooms);
+    },[rooms, selectedFilters, selectedSort, searchParams])
+
+    const clearFilters = () => {
+        setSelectedFilters({
+            roomType: [],
+            priceRange: [],
+        });
+        setSelectedSort('');
+        setSelectedParams({});
+    }
+//added till this portion
 
     return (
         <div className='flex flex-col-reverse lg:flex-row items-start justify-between pt-28 md:pt-35 px-4 md:px-16 lg:px-24 xl:px-32'>
