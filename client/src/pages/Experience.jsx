@@ -1,10 +1,11 @@
 // File: src/pages/Experience.jsx
-import React, { useEffect, useState } from 'react'
+import React, {  useRef, useEffect, useState } from 'react'
 import { useAppContext } from '../context/AppContext'
 import StarRating from '../components/StarRating'
 import { toast } from 'react-hot-toast'
 
 const Experience = () => {
+    const hasFetched = useRef(false);
     const { axios } = useAppContext()
     const [reviews, setReviews] = useState([])
 
@@ -22,6 +23,8 @@ const Experience = () => {
     }
 
     useEffect(() => {
+        if (hasFetched.current) return;
+        hasFetched.current = true;
         fetchAllReviews()
     }, [])
 
@@ -46,3 +49,4 @@ const Experience = () => {
 }
 
 export default Experience
+
