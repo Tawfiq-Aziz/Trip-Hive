@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Title from '../components/Title';
-import { assets, userBookingsDummyData } from '../assets/assets';
+import { assets} from '../assets/assets';//removed , userBookingsDummyData  from here
+import { useAppContext } from '../context/AppContext';
 
 const MyBookings = () => {
   {/* wrote this portion */}
@@ -13,7 +14,7 @@ const MyBookings = () => {
       if(data.success){
         setBookings(data.bookings)
       }else {
-        toast.error(error.message)
+        toast.error(data.message)
       }
     }catch (error){
       toast.error(error.message)
@@ -101,5 +102,6 @@ const MyBookings = () => {
 };
 
 export default MyBookings;
+
 
 
