@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react'//edited
 import { assets, facilityIcons, roomsDummyData } from '../assets/assets'
-import { useNavigate , useSearchParams} from 'react-router-dom'//edited
-import { useAppContext } from '../context/AppContext'//edited
+import { useNavigate } from 'react-router-dom'//edited
 
 const CheckBox=({label,selected =false, onChange =() => {}}) =>{
     return (
