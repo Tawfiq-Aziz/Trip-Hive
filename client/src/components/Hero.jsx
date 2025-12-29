@@ -3,12 +3,14 @@ import heroImage from "../assets/heroImage.png";
 import calenderIcon from "../assets/calenderIcon.svg"; 
 import searchIcon from "../assets/searchIcon.svg";
 import { useAppContext } from "../context/AppContext"; //edited
+import { useNavigate } from 'react-router-dom';//imported
 
 const cities = ["Dhaka", "Chittagong", "Sylhet", "Khulna"];
 
 const Hero = () => {
   //edited navigate syllable
-  const { navigate, getToken, axios, setSearchedCities } = useAppContext();//edited
+  const {getToken, axios, setSearchedCities } = useAppContext();//edited
+  const navigate = useNavigate();
   const [destination, setDestination] = useState("")
 
   const onSearch = async (e)=>{
@@ -122,6 +124,7 @@ const Hero = () => {
 };
 
 export default Hero;
+
 
 
 
