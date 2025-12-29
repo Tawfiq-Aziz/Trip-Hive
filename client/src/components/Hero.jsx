@@ -2,7 +2,7 @@ import React from "react";
 import heroImage from "../assets/heroImage.png";
 import calenderIcon from "../assets/calenderIcon.svg"; 
 import searchIcon from "../assets/searchIcon.svg";
-import { useAppContext } from "../context/AppContext"; //edited
+//import { useAppContext } from "../context/AppContext"; //edited
 
 const cities = ["Dhaka", "Chittagong", "Sylhet", "Khulna"];
 
@@ -123,6 +123,7 @@ const Hero = () => {//edited
 };
 
 export default Hero;
+
 
 
 
