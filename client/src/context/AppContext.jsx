@@ -8,6 +8,9 @@ export const AppContextProvider = ({ children }) => {
   const [searchedCities, setSearchedCities] = useState([]);
   const [rooms, setRooms] = useState([]); 
 
+  // Add showHotelReg 
+  const [showHotelReg, setShowHotelReg] = useState(false);
+
   const getToken = async () => {
     return localStorage.getItem("token");
   };
@@ -21,6 +24,8 @@ export const AppContextProvider = ({ children }) => {
         setSearchedCities,
         rooms,
         setRooms,
+        showHotelReg,        //  add this
+        setShowHotelReg      // add this
       }}
     >
       {children}
