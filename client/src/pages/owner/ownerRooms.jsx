@@ -5,11 +5,13 @@ import { useAuth } from "@clerk/clerk-react";
 const OwnerRooms = () => {
   const { getToken } = useAuth();
   const [rooms, setRooms] = useState([]);
+  const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [selectedHotelId, setSelectedHotelId] = useState("");
   const [formData, setFormData] = useState({
     roomType: "",
     pricePerNight: "",
@@ -18,12 +20,33 @@ const OwnerRooms = () => {
   const [images, setImages] = useState([]);
   const [imagePreview, setImagePreview] = useState([]);
 
-  // Fetch rooms on mount
+  // Fetch hotels and rooms on mount
   useEffect(() => {
-    const fetchRooms = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         const token = await getToken();
+
+        // Fetch owner's hotels
+        const hotelsResponse = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/hotels/owner`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (hotelsResponse.data.success) {
+          const hotelsList = hotelsResponse.data.hotels || [];
+          setHotels(hotelsList);
+          // Set first hotel as default if available
+          if (hotelsList.length > 0) {
+            setSelectedHotelId(hotelsList[0]._id);
+          }
+        }
+
+        // Fetch rooms
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/rooms/owner`,
           {
@@ -37,14 +60,14 @@ const OwnerRooms = () => {
           setRooms(response.data.rooms || []);
         }
       } catch (err) {
-        console.error("Error fetching rooms:", err);
+        console.error("Error fetching data:", err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRooms();
+    fetchData();
   }, [getToken]);
 
   const handleImageChange = (e) => {
@@ -57,8 +80,8 @@ const OwnerRooms = () => {
   };
 
   const handleAddRoom = async () => {
-    if (!formData.roomType || !formData.pricePerNight) {
-      alert("Please fill in room type and price");
+    if (!formData.roomType || !formData.pricePerNight || !selectedHotelId) {
+      alert("Please select a hotel and fill in room type and price");
       return;
     }
 
@@ -76,6 +99,7 @@ const OwnerRooms = () => {
       formDataToSend.append("roomType", formData.roomType);
       formDataToSend.append("pricePerNight", formData.pricePerNight);
       formDataToSend.append("amenities", JSON.stringify(formData.amenities.split(",").map((a) => a.trim()).filter(a => a)));
+      formDataToSend.append("hotelId", selectedHotelId);
 
       // Append images only if provided
       if (images.length > 0) {
@@ -188,6 +212,10 @@ const OwnerRooms = () => {
     setImages([]);
     setImagePreview([]);
     setShowForm(false);
+    // Reset to first hotel
+    if (hotels.length > 0) {
+      setSelectedHotelId(hotels[0]._id);
+    }
   };
 
   return (
@@ -200,6 +228,10 @@ const OwnerRooms = () => {
             setFormData({ roomType: "", pricePerNight: "", amenities: "" });
             setImages([]);
             setImagePreview([]);
+            // Reset to first hotel
+            if (hotels.length > 0) {
+              setSelectedHotelId(hotels[0]._id);
+            }
             setShowForm(!showForm);
           }}
           className="px-6 py-2 bg-[#5b5dff] text-white rounded-lg hover:bg-blue-600 transition"
@@ -218,6 +250,24 @@ const OwnerRooms = () => {
       {showForm && (
         <div className="bg-white p-6 rounded-lg shadow-md mb-6">
           <h2 className="text-xl font-bold mb-4">{editingId ? "Edit Room" : "Add New Room"}</h2>
+          
+          {/* Hotel Selection */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2">Select Hotel *</label>
+            <select
+              value={selectedHotelId}
+              onChange={(e) => setSelectedHotelId(e.target.value)}
+              className="border rounded-lg px-4 py-2 w-full"
+            >
+              <option value="">-- Choose a hotel --</option>
+              {hotels.map((hotel) => (
+                <option key={hotel._id} value={hotel._id}>
+                  {hotel.name} ({hotel.city})
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <input
               type="text"

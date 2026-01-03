@@ -10,14 +10,22 @@ export const createRoom = async (req, res) => {
         console.log('Request body:', req.body);
         console.log('Files:', req.files?.length);
         
-        const { roomType, pricePerNight, amenities } = req.body;
-        const hotel = await Hotel.findOne({ owner: req.user._id });
+        const { roomType, pricePerNight, amenities, hotelId } = req.body;
+        const owner = req.user._id;
+
+        // Get the hotel and verify the current user is the owner
+        const hotel = await Hotel.findById(hotelId);
 
         console.log('Found hotel:', hotel?._id);
 
         if (!hotel) {
-            console.error('Hotel not found for owner:', req.user._id);
+            console.error('Hotel not found:', hotelId);
             return res.json({ success: false, message: "Hotel not found " });
+        }
+
+        // Verify ownership
+        if (hotel.owner.toString() !== owner.toString()) {
+            return res.json({ success: false, message: "Unauthorized - this hotel doesn't belong to you" });
         }
 
         // upload images to cloudinary
@@ -65,9 +73,31 @@ export const getRooms = async (req, res) => {
 // API to get all rooms for a specific hotel
 export const getOwnerRooms = async (req, res) => {
     try {
-        const hotelData = await Hotel.findOne({ owner: req.user._id });
-        const rooms = await Room.find({ hotel: hotelData._id.toString() }).populate
-        ('hotel');
+        const { hotelId } = req.query;
+        const owner = req.user._id;
+
+        // If hotelId is provided, verify ownership
+        if (hotelId) {
+            const hotel = await Hotel.findById(hotelId);
+            if (!hotel) {
+                return res.json({ success: false, message: "Hotel not found" });
+            }
+
+            if (hotel.owner.toString() !== owner.toString()) {
+                return res.json({ success: false, message: "Unauthorized - this hotel doesn't belong to you" });
+            }
+
+            const rooms = await Room.find({ hotel: hotelId }).populate('hotel');
+            return res.json({ success: true, rooms });
+        }
+
+        // Fallback: get rooms from first hotel owned by user
+        const hotelData = await Hotel.findOne({ owner });
+        if (!hotelData) {
+            return res.json({ success: true, rooms: [] });
+        }
+
+        const rooms = await Room.find({ hotel: hotelData._id.toString() }).populate('hotel');
         res.json({ success: true, rooms });
     } catch (error) {
         res.json({ success: false, message: error.message });
