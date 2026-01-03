@@ -2,12 +2,14 @@ import express from "express";
 import Review from "../models/Review.js";
 import Room from "../models/Room.js";
 import Hotel from "../models/Hotel.js";
-import { authMiddleware } from "../middleware/authmiddleware.js"; // Ensure you have auth middleware
+import { protect } from "../middleware/authmiddleware.js";
+
+
 
 const router = express.Router();
 
 
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", protect, async (req, res) => {
   try {
     const { room, rating, comment } = req.body;
     const userId = req.user._id; // from authMiddleware
