@@ -9,6 +9,7 @@ const OwnerHotels = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: "", address: "", city: "", contact: "" });
 
   // Fetch hotels on mount
@@ -49,51 +50,102 @@ const OwnerHotels = () => {
     try {
       setSubmitting(true);
       const token = await getToken();
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/hotels`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.data.success) {
-        alert("Hotel added successfully!");
-        setFormData({ name: "", address: "", city: "", contact: "" });
-        setShowForm(false);
-        // Refresh hotels list
-        const hotelsResponse = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/hotels/owner`,
+      
+      if (editingId) {
+        // Update hotel
+        const response = await axios.put(
+          `${import.meta.env.VITE_API_URL}/api/hotels/${editingId}`,
+          formData,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        if (hotelsResponse.data.success) {
-          setHotels(hotelsResponse.data.hotels || []);
+
+        if (response.data.success) {
+          alert("Hotel updated successfully!");
+          setHotels(hotels.map(h => h._id === editingId ? response.data.hotel : h));
+          setFormData({ name: "", address: "", city: "", contact: "" });
+          setShowForm(false);
+          setEditingId(null);
+        }
+      } else {
+        // Create hotel
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/hotels`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.data.success) {
+          alert("Hotel added successfully!");
+          setFormData({ name: "", address: "", city: "", contact: "" });
+          setShowForm(false);
+          // Refresh hotels list
+          const hotelsResponse = await axios.get(
+            `${import.meta.env.VITE_API_URL}/api/hotels/owner`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (hotelsResponse.data.success) {
+            setHotels(hotelsResponse.data.hotels || []);
+          }
         }
       }
     } catch (err) {
-      console.error("Error adding hotel:", err);
-      alert(err.response?.data?.message || "Failed to add hotel");
+      console.error("Error saving hotel:", err);
+      alert(err.response?.data?.message || "Failed to save hotel");
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleEditHotel = (hotel) => {
+    setEditingId(hotel._id);
+    setFormData({
+      name: hotel.name,
+      address: hotel.address,
+      city: hotel.city,
+      contact: hotel.contact,
+    });
+    setShowForm(true);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setFormData({ name: "", address: "", city: "", contact: "" });
+    setShowForm(false);
   };
 
   const handleDeleteHotel = async (id) => {
     if (window.confirm("Are you sure you want to delete this hotel?")) {
       try {
         const token = await getToken();
-        // You may need to create a DELETE endpoint
-        // For now, filter from local state
-        setHotels(hotels.filter((h) => h._id !== id));
+        const response = await axios.delete(
+          `${import.meta.env.VITE_API_URL}/api/hotels/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.data.success) {
+          alert("Hotel deleted successfully!");
+          // Remove from local state
+          setHotels(hotels.filter((h) => h._id !== id));
+        }
       } catch (err) {
         console.error("Error deleting hotel:", err);
-        alert("Failed to delete hotel");
+        alert(err.response?.data?.message || "Failed to delete hotel");
       }
     }
   };
@@ -103,7 +155,11 @@ const OwnerHotels = () => {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold text-gray-800">Hotels</h1>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            setEditingId(null);
+            setFormData({ name: "", address: "", city: "", contact: "" });
+            setShowForm(!showForm);
+          }}
           className="px-6 py-2 bg-[#5b5dff] text-white rounded-lg hover:bg-blue-600 transition"
         >
           + Add Hotel
@@ -116,10 +172,10 @@ const OwnerHotels = () => {
         </div>
       )}
 
-      {/* Add Hotel Form */}
+      {/* Add/Edit Hotel Form */}
       {showForm && (
         <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-bold mb-4">Add New Hotel</h2>
+          <h2 className="text-xl font-bold mb-4">{editingId ? "Edit Hotel" : "Add New Hotel"}</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <input
               type="text"
@@ -159,7 +215,7 @@ const OwnerHotels = () => {
               {submitting ? "Saving..." : "Save"}
             </button>
             <button
-              onClick={() => setShowForm(false)}
+              onClick={handleCancelEdit}
               className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
             >
               Cancel
@@ -194,7 +250,10 @@ const OwnerHotels = () => {
                     <td className="px-6 py-3">{hotel.city}</td>
                     <td className="px-6 py-3">{hotel.contact}</td>
                     <td className="px-6 py-3 space-x-2">
-                      <button className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
+                      <button
+                        onClick={() => handleEditHotel(hotel)}
+                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+                      >
                         Edit
                       </button>
                       <button

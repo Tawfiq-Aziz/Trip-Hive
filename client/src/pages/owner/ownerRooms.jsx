@@ -9,6 +9,7 @@ const OwnerRooms = () => {
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     roomType: "",
     pricePerNight: "",
@@ -56,8 +57,14 @@ const OwnerRooms = () => {
   };
 
   const handleAddRoom = async () => {
-    if (!formData.roomType || !formData.pricePerNight || images.length === 0) {
-      alert("Please fill in room type, price, and upload at least one image");
+    if (!formData.roomType || !formData.pricePerNight) {
+      alert("Please fill in room type and price");
+      return;
+    }
+
+    // For new rooms, images are required; for editing, they're optional
+    if (!editingId && images.length === 0) {
+      alert("Please upload at least one image");
       return;
     }
 
@@ -68,47 +75,72 @@ const OwnerRooms = () => {
       const formDataToSend = new FormData();
       formDataToSend.append("roomType", formData.roomType);
       formDataToSend.append("pricePerNight", formData.pricePerNight);
-      formDataToSend.append("amenities", JSON.stringify(formData.amenities.split(",").map((a) => a.trim())));
+      formDataToSend.append("amenities", JSON.stringify(formData.amenities.split(",").map((a) => a.trim()).filter(a => a)));
 
-      // Append images
-      images.forEach((image) => {
-        formDataToSend.append("images", image);
-      });
+      // Append images only if provided
+      if (images.length > 0) {
+        images.forEach((image) => {
+          if (image instanceof File) {
+            formDataToSend.append("images", image);
+          }
+        });
+      }
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/rooms`,
-        formDataToSend,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      if (response.data.success) {
-        alert("Room added successfully!");
-        setFormData({ roomType: "", pricePerNight: "", amenities: "" });
-        setImages([]);
-        setImagePreview([]);
-        setShowForm(false);
-
-        // Refresh rooms list
-        const roomsResponse = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/rooms/owner`,
+      if (editingId) {
+        // Update room
+        const response = await axios.put(
+          `${import.meta.env.VITE_API_URL}/api/rooms/${editingId}`,
+          formDataToSend,
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
             },
           }
         );
-        if (roomsResponse.data.success) {
-          setRooms(roomsResponse.data.rooms || []);
+
+        if (response.data.success) {
+          alert("Room updated successfully!");
+          setRooms(rooms.map(r => r._id === editingId ? response.data.room : r));
+          handleCancelEdit();
+        }
+      } else {
+        // Create room
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/rooms`,
+          formDataToSend,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        if (response.data.success) {
+          alert("Room added successfully!");
+          setFormData({ roomType: "", pricePerNight: "", amenities: "" });
+          setImages([]);
+          setImagePreview([]);
+          setShowForm(false);
+
+          // Refresh rooms list
+          const roomsResponse = await axios.get(
+            `${import.meta.env.VITE_API_URL}/api/rooms/owner`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (roomsResponse.data.success) {
+            setRooms(roomsResponse.data.rooms || []);
+          }
         }
       }
     } catch (err) {
-      console.error("Error adding room:", err);
-      alert(err.response?.data?.message || "Failed to add room");
+      console.error("Error saving room:", err);
+      alert(err.response?.data?.message || "Failed to save room");
     } finally {
       setSubmitting(false);
     }
@@ -118,13 +150,44 @@ const OwnerRooms = () => {
     if (window.confirm("Are you sure you want to delete this room?")) {
       try {
         const token = await getToken();
-        // You may need to create a DELETE endpoint
-        setRooms(rooms.filter((r) => r._id !== id));
+        const response = await axios.delete(
+          `${import.meta.env.VITE_API_URL}/api/rooms/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.data.success) {
+          alert("Room deleted successfully!");
+          setRooms(rooms.filter((r) => r._id !== id));
+        }
       } catch (err) {
         console.error("Error deleting room:", err);
-        alert("Failed to delete room");
+        alert(err.response?.data?.message || "Failed to delete room");
       }
     }
+  };
+
+  const handleEditRoom = (room) => {
+    setEditingId(room._id);
+    setFormData({
+      roomType: room.roomType,
+      pricePerNight: room.pricePerNight,
+      amenities: room.amenities ? room.amenities.join(", ") : "",
+    });
+    setImages([]); // Clear new images for edit
+    setImagePreview(room.images || []); // Show existing images
+    setShowForm(true);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setFormData({ roomType: "", pricePerNight: "", amenities: "" });
+    setImages([]);
+    setImagePreview([]);
+    setShowForm(false);
   };
 
   return (
@@ -132,7 +195,13 @@ const OwnerRooms = () => {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold text-gray-800">Rooms</h1>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            setEditingId(null);
+            setFormData({ roomType: "", pricePerNight: "", amenities: "" });
+            setImages([]);
+            setImagePreview([]);
+            setShowForm(!showForm);
+          }}
           className="px-6 py-2 bg-[#5b5dff] text-white rounded-lg hover:bg-blue-600 transition"
         >
           + Add Room
@@ -145,10 +214,10 @@ const OwnerRooms = () => {
         </div>
       )}
 
-      {/* Add Room Form */}
+      {/* Add/Edit Room Form */}
       {showForm && (
         <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-xl font-bold mb-4">Add New Room</h2>
+          <h2 className="text-xl font-bold mb-4">{editingId ? "Edit Room" : "Add New Room"}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <input
               type="text"
@@ -159,7 +228,7 @@ const OwnerRooms = () => {
             />
             <input
               type="number"
-              placeholder="Price Per Night ($)"
+              placeholder={`Price Per Night (${import.meta.env.VITE_CURRENCY})`}
               value={formData.pricePerNight}
               onChange={(e) => setFormData({ ...formData, pricePerNight: e.target.value })}
               className="border rounded-lg px-4 py-2"
@@ -175,7 +244,7 @@ const OwnerRooms = () => {
 
           {/* Image Upload */}
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Upload Room Images (up to 4)</label>
+            <label className="block text-sm font-medium mb-2">Upload Room Images (up to 4) {editingId ? "(Optional)" : "(Required)"}</label>
             <input
               type="file"
               multiple
@@ -188,7 +257,7 @@ const OwnerRooms = () => {
                 {imagePreview.map((preview, idx) => (
                   <img
                     key={idx}
-                    src={preview}
+                    src={typeof preview === 'string' ? preview : preview}
                     alt={`Preview ${idx}`}
                     className="w-full h-24 object-cover rounded"
                   />
@@ -206,10 +275,7 @@ const OwnerRooms = () => {
               {submitting ? "Saving..." : "Save"}
             </button>
             <button
-              onClick={() => {
-                setShowForm(false);
-                setImagePreview([]);
-              }}
+              onClick={handleCancelEdit}
               className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
             >
               Cancel
@@ -242,7 +308,7 @@ const OwnerRooms = () => {
                   <tr key={room._id} className="border-b hover:bg-gray-50">
                     <td className="px-6 py-3 font-medium">{room.roomType}</td>
                     <td className="px-6 py-3">{room.hotel?.name || "N/A"}</td>
-                    <td className="px-6 py-3">${room.pricePerNight}</td>
+                    <td className="px-6 py-3">{import.meta.env.VITE_CURRENCY}{room.pricePerNight}</td>
                     <td className="px-6 py-3">
                       {room.amenities && room.amenities.join(", ")}
                     </td>
@@ -258,7 +324,10 @@ const OwnerRooms = () => {
                       </span>
                     </td>
                     <td className="px-6 py-3 space-x-2">
-                      <button className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
+                      <button
+                        onClick={() => handleEditRoom(room)}
+                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+                      >
                         Edit
                       </button>
                       <button

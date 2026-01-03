@@ -108,7 +108,7 @@ export const getUserBookings = async (req, res) => {
 
 export const getHotelBookings = async (req, res) => {
     try {
-        const hotel = await Hotel.findOne({ owner: req.auth.userId });
+        const hotel = await Hotel.findOne({ owner: req.user._id });
     if(!hotel) {
         return res.json({ success: false, message: "Hotel not found " })
     };
@@ -128,7 +128,7 @@ export const getHotelBookings = async (req, res) => {
 export const cancelBooking = async (req, res) => {
     try {
         const { bookingId } = req.params;
-        const hotel = await Hotel.findOne({ owner: req.auth.userId });
+        const hotel = await Hotel.findOne({ owner: req.user._id });
         
         if (!hotel) {
             return res.json({ success: false, message: "Hotel not found" });
@@ -157,7 +157,7 @@ export const cancelBooking = async (req, res) => {
 // API to get analytics data
 export const getAnalytics = async (req, res) => {
     try {
-        const hotel = await Hotel.findOne({ owner: req.auth.userId });
+        const hotel = await Hotel.findOne({ owner: req.user._id });
         
         if (!hotel) {
             return res.json({ success: false, message: "Hotel not found" });

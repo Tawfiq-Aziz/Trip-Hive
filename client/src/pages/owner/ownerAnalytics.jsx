@@ -101,7 +101,7 @@ const OwnerAnalytics = () => {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <p className="text-gray-500 text-sm mb-2">Total Revenue</p>
           <p className="text-3xl font-bold text-[#5b5dff]">
-            ${analytics.totalRevenue.toFixed(2)}
+            {import.meta.env.VITE_CURRENCY}{analytics.totalRevenue.toFixed(2)}
           </p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md">
@@ -113,7 +113,7 @@ const OwnerAnalytics = () => {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <p className="text-gray-500 text-sm mb-2">Avg Booking Value</p>
           <p className="text-3xl font-bold text-green-500">
-            ${analytics.averageBookingValue.toFixed(2)}
+            {import.meta.env.VITE_CURRENCY}{analytics.averageBookingValue.toFixed(2)}
           </p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md">
@@ -135,7 +135,7 @@ const OwnerAnalytics = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
-                <Tooltip formatter={(value) => `$${value.toFixed(2)}`} />
+                <Tooltip formatter={(value) => `${import.meta.env.VITE_CURRENCY}${value.toFixed(2)}`} />
                 <Legend />
                 <Line
                   type="monotone"

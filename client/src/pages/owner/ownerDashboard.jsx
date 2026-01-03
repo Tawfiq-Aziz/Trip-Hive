@@ -33,7 +33,7 @@ const OwnerDashboard = () => {
 
           setStats([
             { label: "Total Bookings", value: totalBookings, icon: "📅" },
-            { label: "Revenue", value: `$${totalRevenue.toFixed(2)}`, icon: "💰" },
+            { label: "Revenue", value: `${import.meta.env.VITE_CURRENCY}${totalRevenue.toFixed(2)}`, icon: "💰" },
           ]);
 
           // Get recent 5 bookings

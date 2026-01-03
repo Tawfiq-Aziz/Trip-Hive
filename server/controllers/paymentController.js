@@ -2,6 +2,12 @@ import stripe from "../configs/stripe.js";
 
 export const createPaymentIntent = async (req, res) => {
   try {
+    if (!stripe) {
+      return res.status(503).json({ 
+        message: "Payment service is not configured. Please add STRIPE_SECRET_KEY to environment variables." 
+      });
+    }
+
     const { amount } = req.body;
 
     const paymentIntent = await stripe.paymentIntents.create({

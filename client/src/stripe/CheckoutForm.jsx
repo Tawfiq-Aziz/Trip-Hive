@@ -32,7 +32,7 @@ const CheckoutForm = ({ amount }) => {
   return (
     <form onSubmit={handleSubmit}>
       <CardElement />
-      <button type="submit">Pay ${amount}</button>
+      <button type="submit">Pay {import.meta.env.VITE_CURRENCY}{amount}</button>
     </form>
   );
 };

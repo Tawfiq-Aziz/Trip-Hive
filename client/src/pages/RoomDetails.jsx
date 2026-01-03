@@ -196,7 +196,7 @@ const RoomDetails = () => {
                 </div>
 
                 {/* Room Price */}
-                <p className='text-2xl font-medium ml-auto'>${room.pricePerNight}/night</p>
+                <p className='text-2xl font-medium ml-auto'>{import.meta.env.VITE_CURRENCY}{room.pricePerNight}/night</p>
             </div>
 
             {/* Check-In / Check-Out Form */}
