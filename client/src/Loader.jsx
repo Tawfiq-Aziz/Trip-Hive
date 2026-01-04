@@ -1,4 +1,7 @@
 import React from 'react'
+import { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import { useAppContext } from '../context/appContext'
 
 const Loader =  () => {
     const {navigate} = useAppContext()
@@ -19,5 +22,6 @@ const Loader =  () => {
         </div>
     )
 }
+
 
 export default Loader
