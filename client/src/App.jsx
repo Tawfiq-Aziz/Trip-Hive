@@ -11,6 +11,7 @@ import RoomDetails from "./pages/RoomDetails.jsx";
 import {Toaster} from "react-hot-toast";//
 import { useAppContext } from "./context/AppContext.jsx"; // added
 import Experience from './pages/Experience.jsx';  //added
+import Loader from "./Loader";//added_stripe
 //import HotelReg from "./components/HotelReg.jsx";
 
 const App = () => {
@@ -33,6 +34,7 @@ const App = () => {
           <Route path="/my-bookings" element={<MyBookings />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path='/rooms/:id' element={<RoomDetails/>}/>
+          <Route path='/loader/:nextUrl' element={<Loader/>} />
         </Routes>
       </div>
       <Footer />
