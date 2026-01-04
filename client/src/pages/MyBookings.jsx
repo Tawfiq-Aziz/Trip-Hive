@@ -20,6 +20,22 @@ const MyBookings = () => {
       toast.error(error.message)
     }
   }
+
+  const handlePayment = async (bookingIdd)=>{
+    try{
+        const {data} = await axios.post('/api/bookings/stripe-payment',
+            {bookingId},{ headers: { Authorization: `Bearer ${await getToken()}`}})
+            if(data.success){
+                window.location.href = data.url
+
+            }else{
+                TransformStream.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.massage)
+    }
+}
+
   useEffect(()=>{
     if(user){
       fetchUserBookings()
@@ -102,6 +118,7 @@ const MyBookings = () => {
 };
 
 export default MyBookings;
+
 
 
 
