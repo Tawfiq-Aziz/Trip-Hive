@@ -18,5 +18,6 @@ bookingRouter.get('/user', protect, getUserBookings);
 bookingRouter.get('/hotel', protect, getHotelBookings);
 bookingRouter.patch('/:bookingId/cancel', protect, cancelBooking);
 bookingRouter.get('/analytics/data', protect, getAnalytics);
+bookingRouter.post('/stripe-payment',protect, stripePayment);
 
 export default bookingRouter;
