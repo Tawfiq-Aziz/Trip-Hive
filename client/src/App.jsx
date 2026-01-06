@@ -12,7 +12,7 @@ import {Toaster} from "react-hot-toast";//
 import { useAppContext } from "./context/AppContext.jsx"; // added
 import Experience from './pages/Experience.jsx';  //added
 import Loader from "./Loader";//added_stripe
-//import HotelReg from "./components/HotelReg.jsx";
+import HotelReg from "./components/HotelReg.jsx";
 
 const App = () => {
   const location = useLocation();
